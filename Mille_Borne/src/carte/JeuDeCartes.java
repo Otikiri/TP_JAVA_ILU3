@@ -7,17 +7,22 @@ public class JeuDeCartes {
 	public String affichageDeCartes() {
 		StringBuilder str = new StringBuilder();
 		for (int i = 0; i < nbcase; i++) {
-			str.append(conf[i].getNbExemplaires() + " " + conf[i].getCarte()+"\n");
+			str.append(conf[i].getNbExemplaires() + " " + conf[i].getCarte() + "\n");
 		}
 		return str.toString();
 	}
 
-	public Carte[] donnerCartes() {
-		int sumTailles = 0;
+	public int donnerNbCarteTotal() {
+		int sum = 0;
 		for (int i = 0; i < nbcase; i++) {
-			sumTailles += conf[i].getNbExemplaires();
+			sum += conf[i].getNbExemplaires();
 		}
-		Carte[] carteTab = new Carte[sumTailles];
+		return sum;
+	}
+
+	public Carte[] donnerCartes() {
+		int sumCarte = donnerNbCarteTotal();
+		Carte[] carteTab = new Carte[sumCarte];
 		int nbExe = 0;
 		int jind = 0;
 		for (int i = 0; i < nbcase; i++) {

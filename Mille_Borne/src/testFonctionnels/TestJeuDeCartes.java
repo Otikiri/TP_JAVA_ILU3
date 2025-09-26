@@ -1,4 +1,4 @@
-package test;
+package testFonctionnels;
 
 import carte.Attaque;
 import carte.Borne;

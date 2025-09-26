@@ -1,5 +1,7 @@
 package testFonctionnels;
 
+import java.util.Iterator;
+
 import carte.Attaque;
 import carte.Borne;
 import carte.Carte;
@@ -31,12 +33,22 @@ public class TestSabot {
         
 		
 		// test a
+        System.out.println("Test a avec boucle while: \n");
         Sabot sabot = new Sabot(jeu.donnerCartes());
 		while (!sabot.estVide()) {
 			Carte c = sabot.piocher();
 			System.out.println("je pioche "+c);
 		}
+		
 		//test b
+		System.out.println("\nTest b avec iterateur et remove: \n");
+		sabot = new Sabot(jeu.donnerCartes());
+		Iterator<Carte> ite = sabot.iterator();
+		while(ite.hasNext()) {
+			Carte c = ite.next();
+			System.out.println("je pioche "+c);
+			ite.remove();
+		}
 	}
 	
 }

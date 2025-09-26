@@ -2,7 +2,7 @@ package carte;
 
 public enum Type {
 	FEU("Feu rouge","Feu vert","Prioritaire"),
-	ESSENCE("Panne d'essence","Essence","Citerne"),
+	ESSENCE("Panne d'essence","Bidon d'essence","Citerne"),
 	CREVAISON("Crevaison","Roue de secours","Increvable"),
 	ACCIDENT("Accident","Reparations","As du volant");
 	
@@ -11,10 +11,10 @@ public enum Type {
 	private final String nomBot;
 	private final String nomPar;
 	
-	Type(String nomA, String nomB, String nomP) {
+	Type(String nomA, String nomP, String nomB) {
 		this.nomAtq = nomA;
-		this.nomBot = nomB;
 		this.nomPar = nomP; 
+		this.nomBot = nomB;
 	}
 	
 	public String getAtkName() {

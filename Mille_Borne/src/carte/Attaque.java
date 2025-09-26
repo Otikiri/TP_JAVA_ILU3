@@ -8,8 +8,7 @@ public class Attaque extends Bataille {
 
 	@Override
 	public String toString() {
-		Type t = getType();
-		return "Carte "+t+" "+t.getAtkName();
+		return getType().getAtkName();
 	}
 
 }

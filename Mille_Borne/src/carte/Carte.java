@@ -1,6 +1,12 @@
 package carte;
 
+
 public abstract class Carte {
 	@Override
-	public abstract String toString();
+	public boolean equals(Object obj) {
+		if (obj instanceof Carte carte) {
+			return toString().equals(carte.toString());
+		}
+		return false;
+	}
 }

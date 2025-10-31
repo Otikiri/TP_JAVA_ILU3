@@ -12,7 +12,4 @@ public abstract class Probleme extends Carte {
 		return type;
 	}
 
-	@Override
-	public abstract String toString();
-
 }

@@ -37,7 +37,7 @@ public class Sabot implements Iterable<Carte>{
 	
 	public Carte piocher() {
 		if (estVide()) {
-			throw new NoSuchElementException("Sabot vide");
+			throw new IllegalStateException("Sabot vide");
 		}
 		Iterateur ite = new Iterateur();
 		Carte c = ite.next();

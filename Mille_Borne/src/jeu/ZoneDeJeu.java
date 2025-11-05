@@ -1,7 +1,9 @@
 package jeu;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import carte.Attaque;
 import carte.Bataille;
@@ -12,14 +14,16 @@ import carte.FinLimite;
 import carte.Limite;
 import carte.Parade;
 import carte.Type;
+import carte.Botte;
 
 public class ZoneDeJeu {
 	private List<Limite> pileLim = new ArrayList<>();
 	private List<Bataille> pileBat = new ArrayList<>();
 	private List<Borne> pileBorne = new ArrayList<>();
+	private Set<Botte> bottes = new HashSet<>();
 
 	public int donnerLimitationVitesse() {
-		if (pileLim.isEmpty() || pileLim.get(0) instanceof FinLimite) {
+		if (pileLim.isEmpty() || pileLim.get(0) instanceof FinLimite || estPrioritaire()) {
 			return 200;
 		}
 		return 50;
@@ -59,21 +63,75 @@ public class ZoneDeJeu {
 			pileLim.add(0, l);
 		} else if (c instanceof Bataille ba) {
 			pileBat.add(0, ba);
+		} else if (c instanceof Botte bo) {
+			bottes.add(bo);
 		} else {
 			throw new IllegalArgumentException("Type carte inconnu");
 		}
 	}
 
-	public boolean peutAvancer() {
-		if (!pileBat.isEmpty()) {
-			Bataille b = pileBat.get(0);
-			if (b instanceof Parade bn) { //si b est une parade
-				return bn.getType() == Type.FEU; 
-				// on retourne si b la parade est de type FEU -> equivalent a regarder si b = FEU VERT
-				// logique s'applique sur les autres partie aussi
+	private boolean isBotteNAtkSameType(Attaque a) {
+		if (bottes.isEmpty()) {
+			return false;
+		} else {
+			Type aT = a.getType();
+			if (aT == Type.ACCIDENT) {
+				return bottes.contains(new Botte(Type.ACCIDENT));
+			}
+			if (aT == Type.CREVAISON) {
+				return bottes.contains(new Botte(Type.CREVAISON));
+			}
+			if (aT == Type.ESSENCE) {
+				return bottes.contains(new Botte(Type.ESSENCE));
 			}
 		}
 		return false;
+	}
+
+	private boolean pAvAuxParade(Parade pa) {
+		if (pa.getType() == Type.FEU) {
+			return true;
+		} else {
+			return estPrioritaire();
+		}
+	}
+
+	private boolean pAvAuxAttaque(Attaque a) {
+		if (a.getType() == Type.FEU) {
+			return estPrioritaire();
+		}
+		return isBotteNAtkSameType(a) && estPrioritaire();
+	}
+
+	private boolean peutAvancerAux() {
+		if (pileBat.isEmpty() && estPrioritaire()) {
+			return true;
+		}
+		if (!pileBat.isEmpty()) {
+			Bataille som = pileBat.get(0);
+			if (som instanceof Parade pa) {
+				return pAvAuxParade(pa);
+			}
+			if (som instanceof Attaque a) {
+				return pAvAuxAttaque(a);
+			}
+
+		}
+		return false;
+	}
+
+	public boolean peutAvancer() {
+		
+		if (!pileBat.isEmpty()) {
+			Bataille b = pileBat.get(0);
+			if (b instanceof Parade bn) { // si b est une parade
+				return bn.getType() == Type.FEU;
+				// on retourne si b la parade est de type FEU -> equivalent a regarder si b =
+				// FEU VERT
+				// logique s'applique sur les autres partie aussi
+			}
+		}
+		return peutAvancerAux();
 	}
 
 	private boolean estDepotFeuVertAutorise() {
@@ -84,7 +142,7 @@ public class ZoneDeJeu {
 			if (b instanceof Attaque && b.getType() == Type.FEU) {
 				return true;
 			}
-			if (b instanceof Parade && b.getType()!=Type.FEU) {
+			if (b instanceof Parade && b.getType() != Type.FEU) {
 				return true;
 			}
 		}
@@ -93,14 +151,14 @@ public class ZoneDeJeu {
 
 	private boolean estDepotBorneAutorisee(Borne borne) {
 		Bataille b = pileBat.get(0);
-		if (b instanceof Attaque && b.getType() == Type.FEU) { //si b est une attaque de type feu (feu rouge)
+		if (b instanceof Attaque && b.getType() == Type.FEU) { // si b est une attaque de type feu (feu rouge)
 			return false;
 		}
 		if (b instanceof Parade && b.getType() != Type.FEU) {
 			return false;
 		}
 		return donnerValeur(borne) < donnerLimitationVitesse() && donnerKmParcourus() <= 1000;
-		
+
 	}
 
 	private boolean estDepotLimiteAutorisee(Limite limite) {
@@ -118,12 +176,12 @@ public class ZoneDeJeu {
 	}
 
 	public boolean estDepotBatailleAutorisee(Bataille bataille) {
-		
-		//carte bataille est une attaque
+
+		// carte bataille est une attaque
 		if (bataille instanceof Attaque) {
 			if (pileBat.isEmpty()) {
 				return false;
-			}else { 
+			} else {
 				Bataille som = pileBat.get(0);
 				if (som instanceof Attaque) {
 					return false;
@@ -131,12 +189,12 @@ public class ZoneDeJeu {
 			}
 			return true;
 		}
-		
-		//carte bataille est une parade 
+
+		// carte bataille est une parade
 		if (bataille instanceof Parade pa) {
 			if (pa.getType() == Type.FEU) {
 				return estDepotFeuVertAutorise();
-			}else {
+			} else {
 				if (pileBat.isEmpty()) {
 					return false;
 				}
@@ -144,15 +202,11 @@ public class ZoneDeJeu {
 				return som instanceof Attaque && som.getType() == pa.getType();
 			}
 		}
-		
-		
-	    return false;
+
+		return false;
 	}
 
 	public boolean estDepotAutorise(Carte c) {
-//		if (c instanceof Parade) {
-//			return estDepotFeuVertAutorise();
-//		}
 		if (c instanceof Borne b) {
 			return estDepotBorneAutorisee(b);
 		}
@@ -163,5 +217,10 @@ public class ZoneDeJeu {
 			return estDepotBatailleAutorisee(bat);
 		}
 		return false;
+	}
+
+	public boolean estPrioritaire() {
+		Botte b = new Botte(Type.FEU);
+		return bottes.contains(b);
 	}
 }

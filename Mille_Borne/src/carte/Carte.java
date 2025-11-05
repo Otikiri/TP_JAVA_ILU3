@@ -5,8 +5,13 @@ public abstract class Carte {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Carte carte) {
-			return toString().equals(carte.toString());
+			return carte.getClass() == getClass();
 		}
 		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return 31*getClass().hashCode();
 	}
 }

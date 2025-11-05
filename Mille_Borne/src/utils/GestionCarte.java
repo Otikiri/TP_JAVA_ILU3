@@ -8,7 +8,7 @@ import java.util.ListIterator;
 import java.util.Random;
 
 public class GestionCarte {
-	
+
 	public static <T> T extraire(List<T> list) {
 		if (list.isEmpty()) {
 			return null;
@@ -71,12 +71,13 @@ public class GestionCarte {
 					listRass.add(currentT);
 					ite.remove();
 				}
-				
+
 			}
 		}
 		return listRass;
 	}
-	private static <T> boolean verifTTelemEq(T elemPred , List<T> l1,int index) {
+
+	private static <T> boolean verifTTelemEq(T elemPred, List<T> l1, int index) {
 		for (ListIterator<T> ite = l1.listIterator(index); ite.hasNext();) {
 			T current = ite.next();
 			if (current.equals(elemPred)) {
@@ -85,19 +86,21 @@ public class GestionCarte {
 		}
 		return true;
 	}
-	
+
 	public static <T> boolean verifierRassembler(List<T> l1) {
-		if (l1.isEmpty()) {return false; }
-		// init de l'iterateur et de la copie de la liste a parcourir 
-		
+		if (l1.isEmpty()) {
+			return false;
+		}
+		// init de l'iterateur et de la copie de la liste a parcourir
+
 		List<T> copieList = new ArrayList<>(l1);
 		ListIterator<T> iteList = copieList.listIterator();
-		T elemPredRead = null; 
-		while(iteList.hasNext()) {
+		T elemPredRead = null;
+		while (iteList.hasNext()) {
 			T elemCurrentRead = iteList.next();
-			if(elemPredRead != null && !elemCurrentRead.equals(elemPredRead)) {
+			if (elemPredRead != null && !elemCurrentRead.equals(elemPredRead)) {
 				int indElemApresCurr = iteList.nextIndex();
-				if(!verifTTelemEq(elemPredRead, l1, indElemApresCurr)) {
+				if (!verifTTelemEq(elemPredRead, l1, indElemApresCurr)) {
 					return false;
 				}
 			}
@@ -105,5 +108,5 @@ public class GestionCarte {
 		}
 		return true;
 	}
-	
+
 }

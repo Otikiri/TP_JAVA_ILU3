@@ -164,7 +164,8 @@ public class TestZoneDeJeu {
 //			depot ok ? true
 //			peut avancer ? true
 //			Deposer carte borne - 100
-//			depot ok ? falsdepot 		peut avancer ? true
+//			depot ok ? false
+//          depot peut avancer ? true
 //			Deposer carte borne - 25
 //			depot ok ? true
 //			peut avancer ? true

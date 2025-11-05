@@ -75,17 +75,8 @@ public class ZoneDeJeu {
 			return false;
 		} else {
 			Type aT = a.getType();
-			if (aT == Type.ACCIDENT) {
-				return bottes.contains(new Botte(Type.ACCIDENT));
-			}
-			if (aT == Type.CREVAISON) {
-				return bottes.contains(new Botte(Type.CREVAISON));
-			}
-			if (aT == Type.ESSENCE) {
-				return bottes.contains(new Botte(Type.ESSENCE));
-			}
+			return bottes.contains(new Botte(aT));
 		}
-		return false;
 	}
 
 	private boolean pAvAuxParade(Parade pa) {
@@ -121,14 +112,10 @@ public class ZoneDeJeu {
 	}
 
 	public boolean peutAvancer() {
-		
 		if (!pileBat.isEmpty()) {
 			Bataille b = pileBat.get(0);
 			if (b instanceof Parade bn) { // si b est une parade
 				return bn.getType() == Type.FEU;
-				// on retourne si b la parade est de type FEU -> equivalent a regarder si b =
-				// FEU VERT
-				// logique s'applique sur les autres partie aussi
 			}
 		}
 		return peutAvancerAux();
@@ -138,12 +125,18 @@ public class ZoneDeJeu {
 		if (pileBat.isEmpty()) {
 			return true;
 		} else {
+			if (estPrioritaire()) {
+				return false;
+			}
 			Bataille b = pileBat.get(0);
 			if (b instanceof Attaque && b.getType() == Type.FEU) {
 				return true;
 			}
 			if (b instanceof Parade && b.getType() != Type.FEU) {
 				return true;
+			}
+			if (b instanceof Attaque a) {
+				return isBotteNAtkSameType(a);
 			}
 		}
 		return false;
@@ -162,6 +155,9 @@ public class ZoneDeJeu {
 	}
 
 	private boolean estDepotLimiteAutorisee(Limite limite) {
+		if (estPrioritaire()) {
+			return false;
+		}
 		if (pileLim.isEmpty()) {
 			return true;
 		}
@@ -178,14 +174,12 @@ public class ZoneDeJeu {
 	public boolean estDepotBatailleAutorisee(Bataille bataille) {
 
 		// carte bataille est une attaque
-		if (bataille instanceof Attaque) {
-			if (pileBat.isEmpty()) {
+		if (bataille instanceof Attaque a) {
+			if (!peutAvancer()) {
 				return false;
-			} else {
-				Bataille som = pileBat.get(0);
-				if (som instanceof Attaque) {
-					return false;
-				}
+			}
+			if (isBotteNAtkSameType(a)) {
+				return false;
 			}
 			return true;
 		}
@@ -202,7 +196,6 @@ public class ZoneDeJeu {
 				return som instanceof Attaque && som.getType() == pa.getType();
 			}
 		}
-
 		return false;
 	}
 
@@ -216,7 +209,7 @@ public class ZoneDeJeu {
 		if (c instanceof Bataille bat) {
 			return estDepotBatailleAutorisee(bat);
 		}
-		return false;
+		return c instanceof Botte;
 	}
 
 	public boolean estPrioritaire() {

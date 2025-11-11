@@ -10,7 +10,7 @@ import carte.Carte;
 public class MainJoueur implements Iterable<Carte>{
 	private List<Carte> mainJoueur = new ArrayList<>();
 	
-	public void ajouter(Carte c) {
+	public void prendre(Carte c) {
 		mainJoueur.add(c);
 	}
 	
@@ -19,11 +19,15 @@ public class MainJoueur implements Iterable<Carte>{
 		mainJoueur.remove(c);
 	}
 	
-	@Override
+	@Override 
 	public String toString() {
-		StringBuilder strb = new StringBuilder();
-		
-		return strb.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for(Carte c : mainJoueur) {
+			sb.append(c.toString()+" ");
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 	@Override

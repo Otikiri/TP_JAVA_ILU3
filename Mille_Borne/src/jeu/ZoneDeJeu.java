@@ -29,6 +29,16 @@ public class ZoneDeJeu {
 		return 50;
 	}
 
+	public Set<Botte> getBottes() {
+		return bottes;
+	}
+	
+
+
+	public List<Bataille> getPileBat() {
+		return pileBat;
+	}
+
 	private int donnerValeur(Borne b) {
 		Borne b25 = new Borne(25);
 		Borne b50 = new Borne(50);
@@ -143,6 +153,9 @@ public class ZoneDeJeu {
 	}
 
 	private boolean estDepotBorneAutorisee(Borne borne) {
+		if (!peutAvancer()) {
+			return false;
+		}
 		Bataille b = pileBat.get(0);
 		if (b instanceof Attaque && b.getType() == Type.FEU) { // si b est une attaque de type feu (feu rouge)
 			return false;

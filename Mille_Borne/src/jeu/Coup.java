@@ -1,9 +1,5 @@
 package jeu;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import carte.Attaque;
 import carte.Carte;
 import carte.DebutLimite;
@@ -46,35 +42,26 @@ public class Coup {
 	public boolean equals(Object obj) {
 		if (obj instanceof Coup cp) {
 			return cp.joueur != null && joueur.equals(cp.joueur) && carteJoue.equals(cp.carteJoue)
-					&& cible.equals(cp.cible);
+					&& cp.cible!= null && cible.equals(cp.cible);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
+		if (cible == null) {
+			return 31 * (joueur.hashCode() + carteJoue.hashCode()); 
+		}
 		return 31 * (joueur.hashCode() + carteJoue.hashCode() + cible.hashCode());
 	}
 
-	public Set<Coup> coupsPossible(Set<Joueur> participants) {
-		Set<Coup> s = new HashSet<>();
-		Joueur j = joueur;
-		for (Carte carte : j.getMain()) {
-			// on verifie que les cartes avec les participants
-			for (Joueur p : participants) {
-				Coup cp = new Coup(j, p, carte);
-				if (cp.estValide()) {
-					s.add(cp);
-				}
-			}
-			
-			// si la cible est null
-			Coup cp = new Coup(j,null,carte);
-			if (cp.estValide()) {
-				s.add(cp);
-			}
+	@Override
+	public String toString() {
+		if (cible == null) {
+			return "defausse "+carteJoue.toString();
 		}
-		return s;
+		return "depose "+carteJoue.toString()+" dans la zone du jeu "+cible.toString();
 	}
+
 
 }

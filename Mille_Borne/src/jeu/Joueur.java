@@ -9,6 +9,7 @@ import java.util.Random;
 
 import carte.Borne;
 import carte.Carte;
+import carte.Bataille;
 
 public class Joueur {
 	private String nom;
@@ -43,7 +44,7 @@ public class Joueur {
 	}
 
 	public void donner(Carte c) {
-		main.ajouter(c);
+		main.prendre(c);
 	}
 
 	public Carte prendreCarte(Sabot sabot) {
@@ -124,6 +125,10 @@ public class Joueur {
 		return s;
 	}
 
+	public boolean peutDeposerCarte(Carte c) {
+		return zone.estDepotAutorise(c);
+	}
+	
 	public Coup choisirCoup(Set<Joueur> participant) {
 		
 		Set<Coup> sC = coupsPossible(participant);
@@ -132,6 +137,20 @@ public class Joueur {
 		}
 		List<Coup> lC = new ArrayList<>(sC);
 		return lC.get(rand.nextInt(lC.size()));
+	}
+	
+	public String afficherEtatJouer() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Etat du joueur : "+nom+"\n");
+		sb.append(">Bottes : "+zone.getBottes()+"\n");
+		List<Bataille> b = zone.getPileBat();
+		Bataille bat = null;
+		if (!b.isEmpty()) {
+			bat = b.get(0);
+		}
+		sb.append(">Sommet de la pile : "+bat+"\n");
+		sb.append(">Main : "+main.toString()+"\n");
+		return sb.toString();
 	}
 }
 

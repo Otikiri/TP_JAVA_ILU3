@@ -8,15 +8,15 @@ import java.util.List;
 import carte.Carte;
 
 public class MainJoueur implements Iterable<Carte>{
-	private List<Carte> mJoueur = new ArrayList<>();
+	private List<Carte> mainJoueur = new ArrayList<>();
 	
 	public void ajouter(Carte c) {
-		mJoueur.add(c);
+		mainJoueur.add(c);
 	}
 	
 	public void jouer(Carte c) {
-		assert(mJoueur.contains(c)==true);
-		mJoueur.remove(c);
+		assert(mainJoueur.contains(c)==true);
+		mainJoueur.remove(c);
 	}
 	
 	@Override
@@ -28,7 +28,11 @@ public class MainJoueur implements Iterable<Carte>{
 
 	@Override
 	public Iterator<Carte> iterator() {
-		return mJoueur.listIterator();
+		return mainJoueur.listIterator();
+	}
+
+	public List<Carte> getmJoueur() {
+		return mainJoueur;
 	}
 
 	

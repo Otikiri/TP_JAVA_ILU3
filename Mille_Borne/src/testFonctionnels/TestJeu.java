@@ -25,7 +25,10 @@ public class TestJeu {
 //		System.out.println(jeu.jouerTour(jack));
 //		System.out.println(jeu.jouerTour(bill));
 //		System.out.println(jeu.jouerTour(luffy));
-		System.out.println(jeu.lancerTour());
+		System.out.println(jeu.lancerTour()+"\n\n");
+		System.out.println(jack.afficherEtatJouer());
+		System.out.println(bill.afficherEtatJouer());
+		System.out.println(luffy.afficherEtatJouer());
 		
 	
 	}

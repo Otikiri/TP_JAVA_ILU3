@@ -106,10 +106,12 @@ public class Jeu {
 		}
 		if (tourMax<=tour) {
 			partie.append("stalemate\n");
+			
 		}
 		if (winner) {
-			partie.append(playerCur.toString()+" a gagner");
+			partie.append(playerCur.toString()+" a gagner\n");
 		}
+		partie.append("Ce qui reste dans le sabot :\n"+sabot.toString()+"\n");
 		return partie.toString();
 		
 	}

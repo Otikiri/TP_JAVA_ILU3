@@ -6,10 +6,10 @@ import java.util.NoSuchElementException;
 
 import carte.Carte;
 
-public class Sabot implements Iterable<Carte>{
+public class Sabot implements Iterable<Carte> {
 	private Carte[] carteTab;
 	private int nbCartes;
-	private int nbOp = 0 ;
+	private int nbOp = 0;
 
 	public Sabot(Carte[] carteTab) {
 		this.carteTab = carteTab;
@@ -34,7 +34,7 @@ public class Sabot implements Iterable<Carte>{
 	public Iterator<Carte> iterator() {
 		return new Iterateur();
 	}
-	
+
 	public Carte piocher() {
 		if (estVide()) {
 			throw new IllegalStateException("Sabot vide");
@@ -44,21 +44,34 @@ public class Sabot implements Iterable<Carte>{
 		ite.remove();
 		return c;
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		int size = nbCartes - 1;
+		for (int i = 0; i < size; i++) {
+			sb.append(">" + carteTab[i] + "\n");
+		}
+		sb.append(carteTab[size]);
+		return sb.toString();
+
+	}
+
 	public int getNbCartes() {
 		return nbCartes;
 	}
-	
-	private class Iterateur implements Iterator<Carte>{
+
+	private class Iterateur implements Iterator<Carte> {
 		private int indIte = 0;
 		private boolean nextEff = false;
 		private int nbOPref = nbOp;
-		
+
 		private void verifConcurence() {
 			if (nbOPref != nbOp) {
 				throw new ConcurrentModificationException();
 			}
 		}
+
 		@Override
 		public boolean hasNext() {
 			return indIte < nbCartes;
@@ -69,30 +82,29 @@ public class Sabot implements Iterable<Carte>{
 			verifConcurence();
 			if (hasNext()) {
 				Carte c = carteTab[indIte];
-				indIte ++;
+				indIte++;
 				nextEff = true;
 				return c;
-			}else {
+			} else {
 				throw new NoSuchElementException();
 			}
 		}
-		
+
 		@Override
 		public void remove() {
 			verifConcurence();
-			if (!nextEff || nbCartes <1) {
+			if (!nextEff || nbCartes < 1) {
 				throw new IllegalStateException();
 			}
-			for (int i = indIte-1; i < nbCartes-1; i++) {
-				carteTab[i] = carteTab[i+1];
+			for (int i = indIte - 1; i < nbCartes - 1; i++) {
+				carteTab[i] = carteTab[i + 1];
 			}
 			nextEff = false;
-			indIte --; 
-			nbCartes--; 
-			nbOPref ++;
-			nbOp ++;
+			indIte--;
+			nbCartes--;
+			nbOPref++;
+			nbOp++;
 		}
 	}
-
 
 }

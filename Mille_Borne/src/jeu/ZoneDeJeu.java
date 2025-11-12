@@ -32,8 +32,6 @@ public class ZoneDeJeu {
 	public Set<Botte> getBottes() {
 		return bottes;
 	}
-	
-
 
 	public List<Bataille> getPileBat() {
 		return pileBat;
@@ -59,7 +57,6 @@ public class ZoneDeJeu {
 
 	public int donnerKmParcourus() {
 		int sum = 0;
-
 		for (Borne b : pileBorne) {
 			sum += donnerValeur(b);
 		}
@@ -89,119 +86,141 @@ public class ZoneDeJeu {
 		}
 	}
 
-	private boolean pAvAuxParade(Parade pa) {
-		if (pa.getType() == Type.FEU) {
-			return true;
-		} else {
+	public boolean peutAvancer() {
+		// Pile vide et prioritaire
+		if (pileBat.isEmpty()) {
 			return estPrioritaire();
 		}
-	}
-
-	private boolean pAvAuxAttaque(Attaque a) {
-		if (a.getType() == Type.FEU) {
-			return estPrioritaire();
-		}
-		return isBotteNAtkSameType(a) && estPrioritaire();
-	}
-
-	private boolean peutAvancerAux() {
-		if (pileBat.isEmpty() && estPrioritaire()) {
+		
+		Bataille som = pileBat.get(0);
+		
+		// Sommet est un feu vert
+		if (som instanceof Parade && som.getType() == Type.FEU) {
 			return true;
 		}
-		if (!pileBat.isEmpty()) {
-			Bataille som = pileBat.get(0);
-			if (som instanceof Parade pa) {
-				return pAvAuxParade(pa);
-			}
-			if (som instanceof Attaque a) {
-				return pAvAuxAttaque(a);
-			}
-
+		
+		// Sommet est une parade (non-feu) et on est prioritaire
+		if (som instanceof Parade) {
+			return estPrioritaire();
 		}
+		
+		// Sommet est une attaque de type FEU et on est prioritaire
+		if (som instanceof Attaque && som.getType() == Type.FEU) {
+			return estPrioritaire();
+		}
+		
+		// Sommet est une attaque d'un autre type, on a la botte ET on est prioritaire
+		if (som instanceof Attaque a) {
+			return isBotteNAtkSameType(a) && estPrioritaire();
+		}
+		
 		return false;
 	}
 
-	public boolean peutAvancer() {
-		if (!pileBat.isEmpty()) {
-			Bataille b = pileBat.get(0);
-			if (b instanceof Parade bn) { // si b est une parade
-				return bn.getType() == Type.FEU;
-			}
-		}
-		return peutAvancerAux();
-	}
-
 	private boolean estDepotFeuVertAutorise() {
+		// Si prioritaire, on ne peut pas déposer de feu vert
+		if (estPrioritaire()) {
+			return false;
+		}
+		
+		// Si pile vide, on peut déposer un feu vert
 		if (pileBat.isEmpty()) {
 			return true;
-		} else {
-			if (estPrioritaire()) {
-				return false;
-			}
-			Bataille b = pileBat.get(0);
-			if (b instanceof Attaque && b.getType() == Type.FEU) {
-				return true;
-			}
-			if (b instanceof Parade && b.getType() != Type.FEU) {
-				return true;
-			}
-			if (b instanceof Attaque a) {
-				return isBotteNAtkSameType(a);
-			}
 		}
+		
+		Bataille b = pileBat.get(0);
+		
+		// Si le sommet est un feu rouge, on peut déposer un feu vert
+		if (b instanceof Attaque && b.getType() == Type.FEU) {
+			return true;
+		}
+		
+		// Si le sommet est une parade qui n'est pas un feu vert, on peut déposer un feu vert
+		if (b instanceof Parade && b.getType() != Type.FEU) {
+			return true;
+		}
+		
+		// Si le sommet est une attaque dont on a la botte, on peut déposer un feu vert
+		if (b instanceof Attaque a) {
+			return isBotteNAtkSameType(a);
+		}
+		
 		return false;
 	}
 
 	private boolean estDepotBorneAutorisee(Borne borne) {
+		// On ne peut pas avancer
 		if (!peutAvancer()) {
 			return false;
 		}
-		Bataille b = pileBat.get(0);
-		if (b instanceof Attaque && b.getType() == Type.FEU) { // si b est une attaque de type feu (feu rouge)
-			return false;
+		
+		// Si la pile n'est pas vide, vérifier les conditions supplémentaires
+		if (!pileBat.isEmpty()) {
+			Bataille b = pileBat.get(0);
+			
+			// Si c'est un feu rouge, on ne peut pas déposer de borne
+			if (b instanceof Attaque && b.getType() == Type.FEU) {
+				return false;
+			}
+			
+			// Si c'est une parade qui n'est pas un feu vert, on ne peut pas déposer de borne
+			if (b instanceof Parade && b.getType() != Type.FEU) {
+				return false;
+			}
 		}
-		if (b instanceof Parade && b.getType() != Type.FEU) {
-			return false;
-		}
-		return donnerValeur(borne) < donnerLimitationVitesse() && donnerKmParcourus() <= 1000;
-
+		
+		// Vérifier la limitation de vitesse et le total de km
+		int valeurBorne = donnerValeur(borne);
+		return valeurBorne <= donnerLimitationVitesse() 
+			&& (donnerKmParcourus() + valeurBorne) <= 1000;
 	}
 
 	private boolean estDepotLimiteAutorisee(Limite limite) {
+		// Si prioritaire, on ne peut pas déposer de limite
 		if (estPrioritaire()) {
 			return false;
 		}
+		
+		// Si pile vide, on peut déposer une limite
 		if (pileLim.isEmpty()) {
 			return true;
 		}
+		
 		Limite l = pileLim.get(0);
+		
+		// On peut déposer DebutLimite seulement si le sommet est FinLimite
 		if (limite instanceof DebutLimite) {
 			return l instanceof FinLimite;
 		}
+		
+		// On peut déposer FinLimite seulement si le sommet est DebutLimite
 		if (limite instanceof FinLimite) {
 			return l instanceof DebutLimite;
 		}
+		
 		return false;
 	}
 
 	public boolean estDepotBatailleAutorisee(Bataille bataille) {
-
-		// carte bataille est une attaque
+		// Carte bataille est une attaque
 		if (bataille instanceof Attaque a) {
+			// On ne peut pas attaquer si on ne peut pas avancer
 			if (!peutAvancer()) {
 				return false;
 			}
+			// On ne peut pas déposer une attaque si on a la botte correspondante
 			if (isBotteNAtkSameType(a)) {
 				return false;
 			}
 			return true;
 		}
 
-		// carte bataille est une parade
+		// Carte bataille est une parade
 		if (bataille instanceof Parade pa) {
 			if (pa.getType() == Type.FEU) {
 				return estDepotFeuVertAutorise();
 			} else {
+				// Pour les autres parades, il faut qu'il y ait une attaque correspondante au sommet
 				if (pileBat.isEmpty()) {
 					return false;
 				}
@@ -209,6 +228,7 @@ public class ZoneDeJeu {
 				return som instanceof Attaque && som.getType() == pa.getType();
 			}
 		}
+		
 		return false;
 	}
 
@@ -222,6 +242,7 @@ public class ZoneDeJeu {
 		if (c instanceof Bataille bat) {
 			return estDepotBatailleAutorisee(bat);
 		}
+		// Les bottes peuvent toujours être déposées
 		return c instanceof Botte;
 	}
 

@@ -19,11 +19,11 @@ public class TestSabot {
 		JeuDeCartes jeu = new JeuDeCartes();
 
 		// test a System.out.println("Test a avec boucle while: \n");
-		Sabot sabot = new Sabot(jeu.donnerCartes());
-		while (!sabot.estVide()) {
-			Carte c = sabot.piocher();
-			System.out.println("je pioche " + c);
-		}
+//		Sabot sabot = new Sabot(jeu.donnerCartes());
+//		while (!sabot.estVide()) {
+//			Carte c = sabot.piocher();
+//			System.out.println("je pioche " + c);
+//		}
 
 		// test b System.out.println("\nTest b avec iterateur et remove: \n"); \
 //		sabot = new Sabot(jeu.donnerCartes());
@@ -35,22 +35,22 @@ public class TestSabot {
 //		}
 
 		// test c
-//		try {
-//			Sabot sabot = new Sabot(jeu.donnerCartes());
-//			Carte cartePiochee = sabot.piocher();
-//			System.out.println("Je pioche " + cartePiochee);
-//			for (Iterator<Carte> iterator = sabot.iterator(); iterator.hasNext();) {
-//				Carte carte = iterator.next();
-//				System.out.println("Je pioche " + carte);
-//				iterator.remove();
-//				//cartePiochee = sabot.piocher();
-//				//sabot.ajouterCarte(new Botte(Type.ACCIDENT));
-//			}
-//			Iterator<Carte> iterator = sabot.iterator();
-//			System.out.println("\nLa pioche contient encore des cartes ? " + iterator.hasNext());
-//		} catch (ConcurrentModificationException e) {
-//			System.out.println(e);
-//		}
+		try {
+			Sabot sabot = new Sabot(jeu.donnerCartes());
+			Carte cartePiochee = sabot.piocher();
+			System.out.println("Je pioche " + cartePiochee);
+			for (Iterator<Carte> iterator = sabot.iterator(); iterator.hasNext();) {
+				Carte carte = iterator.next();
+				System.out.println("Je pioche " + carte);
+				iterator.remove();
+				//cartePiochee = sabot.piocher();
+				//sabot.ajouterCarte(new Botte(Type.ACCIDENT));
+			}
+			Iterator<Carte> iterator = sabot.iterator();
+			System.out.println("\nLa pioche contient encore des cartes ? " + iterator.hasNext());
+		} catch (ConcurrentModificationException e) {
+			System.out.println(e);
+		}
 
 	}
 

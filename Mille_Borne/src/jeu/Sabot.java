@@ -45,6 +45,10 @@ public class Sabot implements Iterable<Carte>{
 		return c;
 	}
 	
+	public int getNbCartes() {
+		return nbCartes;
+	}
+	
 	private class Iterateur implements Iterator<Carte>{
 		private int indIte = 0;
 		private boolean nextEff = false;
@@ -89,4 +93,6 @@ public class Sabot implements Iterable<Carte>{
 			nbOp ++;
 		}
 	}
+
+
 }

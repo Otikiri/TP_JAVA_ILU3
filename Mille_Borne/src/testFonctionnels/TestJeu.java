@@ -1,23 +1,32 @@
 package testFonctionnels;
 
-
 import jeu.Jeu;
 import jeu.Joueur;
 
 public class TestJeu {
 	public static void main(String[] args) {
-		Jeu jeu = new Jeu();
-		Joueur luffy = new Joueur("Luffy");
 		Joueur jack = new Joueur("Jack");
+		Joueur luffy = new Joueur("Luffy");
 		Joueur bill = new Joueur("Bill");
+		
+		System.out.println("---------------------------INIT--------------------------------\n\n");
+		Jeu jeu = new Jeu();
+		jeu.inscrire(jack,bill,luffy);
+		
+		System.out.println("Starting round:\nDistributing cards:\n");
+		jeu.distribuer();
+		System.out.println("Done distributing\nInital states:\n");
+		System.out.println(jack.afficherEtatJouer());
+		System.out.println(bill.afficherEtatJouer());
+		System.out.println(luffy.afficherEtatJouer());
 	
+		System.out.println("---------------------------PARTIE--------------------------------\n\n");
 		
-		jeu.inscrire(luffy,jack,bill);
-		System.out.println("\nDistributing the cards");
-		jeu.distribuerCarte();
-		System.out.println("Distributing the cards done\n");
+//		System.out.println(jeu.jouerTour(jack));
+//		System.out.println(jeu.jouerTour(bill));
+//		System.out.println(jeu.jouerTour(luffy));
+		System.out.println(jeu.lancerTour());
 		
-		System.out.println(jeu.lancer());
-		
+	
 	}
 }
